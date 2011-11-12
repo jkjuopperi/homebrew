@@ -11,6 +11,8 @@ class Lander < Formula
   depends_on 'sdl_image'
   depends_on 'sdl_mixer'
 
+  fails_with_llvm "Crashes with signal 11"
+
   def patches
     DATA
   end
