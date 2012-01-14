@@ -1,19 +1,24 @@
 require 'formula'
 
 class Mksh < Formula
-  url 'https://www.mirbsd.org/MirOS/dist/mir/mksh/mksh-R40b.cpio.gz'
-  version 'R40b'
-  md5 'afb08b65272ace550ec59b26a876a7de'
+  url 'https://www.mirbsd.org/MirOS/dist/mir/mksh/mksh-R40d.cpio.gz'
   homepage 'https://www.mirbsd.org/mksh.htm'
+  md5 'c6428401103367730a95b99284bf47dc'
+  version '0.40d'
   head 'bzr://lp:mksh'
 
   def install
-    system "sh Build.sh -r"
-    system "install -d #{prefix}/bin"
-    system "install -s -m 555 mksh #{prefix}/bin/mksh"
-    system "install -d #{prefix}/share/doc/mksh/examples"
-    system "install -m 444 dot.mkshrc #{prefix}/share/doc/mksh/examples/"
-    system "install -d #{prefix}/share/man/man1"
-    system "install -m 444 mksh.1 #{prefix}/share/man/man1/mksh.1"
+    system 'sh ./Build.sh -combine'
+    bin.install 'mksh'
+    man1.install 'mksh.1'
+  end
+
+  def caveats; <<-EOS.undent
+    To allow using mksh as a login shell, run this as root:
+        echo #{HOMEBREW_PREFIX}/bin/mksh >> /etc/shells
+    Then, any user may run
+        chsh
+    to change their shell.
+    EOS
   end
 end
