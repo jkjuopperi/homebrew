@@ -1,11 +1,11 @@
 require 'formula'
 
 class Bird < Formula
-  url 'ftp://bird.network.cz/pub/bird/bird-1.3.4.tar.gz'
+  url 'ftp://bird.network.cz/pub/bird/bird-1.3.5.tar.gz'
   #head 'git://git.nic.cz/bird.git'
   head 'git://github.com/jkjuopperi/bird.git'
   homepage 'http://bird.network.cz/'
-  md5 '20f5aa9d3f853d2c922438dc9d922ecc'
+  md5 '9efc2b1c05fa6298a8df60f5147ad5c1'
 
   depends_on 'readline'
 
