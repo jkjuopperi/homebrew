@@ -1,9 +1,9 @@
 require 'formula'
 
 class Miniupnpc < Formula
-  url 'http://miniupnp.free.fr/files/download.php?file=miniupnpc-1.5.tar.gz'
+  url 'http://miniupnp.free.fr/files/download.php?file=miniupnpc-1.6.20120125.tar.gz'
   homepage 'http://miniupnp.free.fr'
-  md5 'ac3b97f2a517d5d23ef985e6122a7837'
+  md5 '61f136f1302add9d89d329a6c1e338ca'
 
   def install
     system "make INSTALLPREFIX=#{prefix} install"
