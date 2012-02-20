@@ -1,8 +1,11 @@
 require 'formula'
 
 class Kes < Formula
-  head 'https://github.com/epilnivek/kes.git'
   homepage 'https://github.com/epilnivek/kes'
+  url 'https://github.com/epilnivek/kes/tarball/v0.9'
+  md5 '6ea08b27d49685a261e8de74c8428158'
+
+  head 'https://github.com/epilnivek/kes.git'
 
   def install
     system "make"
