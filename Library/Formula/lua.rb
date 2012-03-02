@@ -33,9 +33,6 @@ class Lua < Formula
     safe_system '/usr/bin/patch', '-d', 'src', '-i', '../patch-lua-5.1.4-3'
     # we could use the patches method if it supported additional arguments (-d in our case)
 
-    ENV.append 'CFLAGS', '-arch i386'
-    ENV.append 'LDFLAGS', '-arch i386'
-
     # Use our CC/CFLAGS to compile.
     inreplace 'src/Makefile' do |s|
       s.remove_make_var! 'CC'
