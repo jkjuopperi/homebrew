@@ -54,6 +54,8 @@ class Erlang < Formula
 
   fails_with_llvm :build => 2334
 
+  depends_on "autoconf" => :build
+
   def install
     ohai "Compilation may take a very long time; use `brew install -v erlang` to see progress"
     if ENV.compiler == :llvm
