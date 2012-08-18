@@ -1,8 +1,6 @@
 module MacOS extend self
 
   MDITEM_BUNDLE_ID_KEY = "kMDItemCFBundleIdentifier"
-  APPLE_X11_BUNDLE_ID = "org.x.X11"
-  XQUARTZ_BUNDLE_ID = "org.macosforge.xquartz.X11"
 
   def version
     MACOS_VERSION
@@ -67,7 +65,8 @@ module MacOS extend self
     @dev_tools_path ||= if File.exist? "/usr/bin/cc" and File.exist? "/usr/bin/make"
       # probably a safe enough assumption (the unix way)
       Pathname.new "/usr/bin"
-    elsif not Xcode.bad_xcode_select_path? and system "/usr/bin/xcrun -find make 1>/dev/null 2>&1"
+    # Note that the exit status of system "xcrun foo" isn't always accurate
+    elsif not Xcode.bad_xcode_select_path? and not `/usr/bin/xcrun -find make 2>/dev/null`.empty?
       # Wherever "make" is there are the dev tools.
       Pathname.new(`/usr/bin/xcrun -find make`.chomp).dirname
     elsif File.exist? "#{Xcode.prefix}/usr/bin/make"
@@ -168,28 +167,6 @@ module MacOS extend self
     end
   end
 
-  def xquartz_version
-    # This returns the version number of XQuartz, not of the upstream X.org
-    # (which is why it is not called x11_version). Note that the X11.app
-    # distributed by Apple is also XQuartz, and therefore covered by this method.
-    path = app_with_bundle_id(XQUARTZ_BUNDLE_ID) || app_with_bundle_id(APPLE_X11_BUNDLE_ID)
-    version = if not path.nil? and path.exist?
-      `mdls -raw -name kMDItemVersion #{path}`.strip
-    end
-  end
-
-  def x11_prefix
-    @x11_prefix ||= if Pathname.new('/opt/X11/lib/libpng.dylib').exist?
-      Pathname.new('/opt/X11')
-    elsif Pathname.new('/usr/X11/lib/libpng.dylib').exist?
-      Pathname.new('/usr/X11')
-    end
-  end
-
-  def x11_installed?
-    not x11_prefix.nil?
-  end
-
   def macports_or_fink_installed?
     # See these issues for some history:
     # http://github.com/mxcl/homebrew/issues/#issue/13
@@ -229,14 +206,17 @@ module MacOS extend self
   def snow_leopard?
     10.6 <= MACOS_VERSION # Actually Snow Leopard or newer
   end
+  alias :snow_leopard_or_newer? :snow_leopard?
 
   def lion?
     10.7 <= MACOS_VERSION # Actually Lion or newer
   end
+  alias :lion_or_newer? :lion?
 
   def mountain_lion?
     10.8 <= MACOS_VERSION # Actually Mountain Lion or newer
   end
+  alias :mountain_lion_or_newer? :mountain_lion?
 
   def prefer_64_bit?
     Hardware.is_64_bit? and not leopard?
@@ -253,7 +233,8 @@ module MacOS extend self
     "4.3.1" => {:llvm_build_version=>2336, :clang_version=>"3.1", :clang_build_version=>318},
     "4.3.2" => {:llvm_build_version=>2336, :clang_version=>"3.1", :clang_build_version=>318},
     "4.3.3" => {:llvm_build_version=>2336, :clang_version=>"3.1", :clang_build_version=>318},
-    "4.4" => {:llvm_build_version=>2336, :clang_version=>"4.0", :clang_build_version=>421}
+    "4.4" => {:llvm_build_version=>2336, :clang_version=>"4.0", :clang_build_version=>421},
+    "4.4.1" => {:llvm_build_version=>2336, :clang_version=>"4.0", :clang_build_version=>421}
   }
 
   def compilers_standard?
@@ -269,8 +250,8 @@ module MacOS extend self
   end
 
   def mdfind attribute, id
-    path = `mdfind "#{attribute} == '#{id}'"`.strip
-    Pathname.new(path) unless path.empty?
+    path = `mdfind "#{attribute} == '#{id}'"`.split("\n").first
+    Pathname.new(path) unless path.nil? or path.empty?
   end
 
   def pkgutil_info id
@@ -278,4 +259,5 @@ module MacOS extend self
   end
 end
 
-require 'xcode'
+require 'macos/xcode'
+require 'macos/xquartz'

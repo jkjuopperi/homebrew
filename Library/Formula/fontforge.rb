@@ -2,8 +2,9 @@ require 'formula'
 
 class Fontforge < Formula
   homepage 'http://fontforge.sourceforge.net'
-  url 'http://downloads.sourceforge.net/project/fontforge/fontforge-source/fontforge_full-20110222.tar.bz2'
-  md5 '5be4dda345b5d73a27cc399df96e463a'
+  url 'http://downloads.sourceforge.net/project/fontforge/fontforge-source/fontforge_full-20120731-b.tar.bz2'
+  sha1 'b520f532b48e557c177dffa29120225066cc4e84'
+  version '20120731'
 
   head 'git://fontforge.git.sourceforge.net/gitroot/fontforge/fontforge'
 
@@ -12,6 +13,7 @@ class Fontforge < Formula
   depends_on 'pango'
   depends_on 'potrace'
   depends_on :x11
+  depends_on :xcode
 
   def options
     [['--without-python', 'Build without Python.']]
@@ -61,9 +63,8 @@ class Fontforge < Formula
     # Fix hard-coded include file paths. Reported usptream:
     # http://sourceforge.net/mailarchive/forum.php?thread_name=C1A32103-A62D-468B-AD8A-A8E0E7126AA5%40smparkes.net&forum_name=fontforge-devel
     # https://trac.macports.org/ticket/33284
-    header_prefix = MacOS::Xcode.prefix
     inreplace %w(fontforge/macbinary.c fontforge/startui.c gutils/giomime.c) do |s|
-      s.gsub! "/Developer", header_prefix
+      s.gsub! "/Developer", MacOS::Xcode.prefix
     end
 
     system "make"
